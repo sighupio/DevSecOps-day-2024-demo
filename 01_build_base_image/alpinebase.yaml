@@ -1,0 +1,11 @@
+contents:  
+  repositories:    
+    - https://dl-cdn.alpinelinux.org/alpine/edge/main
+  packages:    
+    - ca-certificates-bundle
+    - alpine-baselayout
+entrypoint:  
+  command: /bin/sh -l
+  
+archs:  
+  - x86_64

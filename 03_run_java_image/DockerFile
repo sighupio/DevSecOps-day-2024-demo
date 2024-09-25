@@ -1,0 +1,45 @@
+# Stage 1: Build the application
+FROM rwolfiopenjdk21-base:test-amd64 AS builder
+
+# Set environment variables (if needed)
+ENV MAVEN_OPTS="-Xmx512m"
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the project files
+COPY pom.xml .
+
+# Download the dependencies
+RUN mvn dependency:resolve
+
+# Copy the rest of the application code
+COPY src /app/src
+
+# Package the application
+RUN mvn package
+
+# Stage 2: Create the final image
+FROM wolfiopenjdk21-base:test-amd64
+
+# Create a non-root user and group with specific UID/GID
+RUN addgroup -g 9000 appgroup && \
+    adduser -u 9000 -G appgroup -h /app -s /sbin/nologin -D mavenappuser
+
+# Adjust permissions for the application directory
+RUN chown -R mavenappuser:appgroup /app
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the packaged application from the builder stage
+COPY --from=builder /app/target/hello-world-1.0-SNAPSHOT.jar /app/hello-world-1.0-SNAPSHOT.jar
+
+# Change the user to non-root
+USER mavenappuser
+
+# Expose the application port (if necessary, specify the port your app uses)
+EXPOSE 8080
+
+# Define the entry point for the container
+ENTRYPOINT ["java", "-jar", "hello-world-1.0-SNAPSHOT.jar"]
