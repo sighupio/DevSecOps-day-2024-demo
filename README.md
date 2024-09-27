@@ -78,5 +78,5 @@ docker run -it --rm -p 8082:8080 myapp01-eclipseofficial:1.0
 
 ##USEFUL RESOURCES
 
-apko Overview Chainguard Academy https://edu.chainguard.dev/open-source/build-tools/apko/overview/
-apko github repo:https://github.com/chainguard-dev/apko
+apko Overview Chainguard Academy https://edu.chainguard.dev/open-source/build-tools/apko/overview/ 
+apko github repo:https://github.com/chainguard-dev/apko  
