@@ -12,7 +12,8 @@ In the following examples, we will explain some use cases using the tools apko a
 
 apko is the tool that we will use into this poc
 
-the easiest way to install apko on your computer is to pull it as container
+There are several ways to install and use apko, 
+in this poc we will use it from the offial container image
 
 ```
 docker pull cgr.dev/chainguard/apko
@@ -49,11 +50,33 @@ docker load <  alpinebase.tar
 
 docker pull redhat/ubi8
 
+###Let's see how this could work to build&run an application
+
+Now move to 02_build_java_image and read wolfieopenjdk21.yaml
+
+Build the new image
+
 ```
 docker run --rm -v ${PWD}:/work -w /work cgr.dev/chainguard/apko build wolfieopenjdk21.yaml wolfiopenjdk21-base:test wolfieopenjdk21.tar
 ```
+and import it into the local docker registry
 
 docker load <  wolfieopenjdk21.tar
 
-ripartire da qui https://github.com/sighupio/ssc/tree/main/examples/eclipse-temurin
-docker wolfiopenjdk21-base:test-amd64
+##BUILD&RUN the image
+
+
+docker build -t my-java-app01:wolfie .
+docker run -it --rm -p 8080:8080 my-java-app01:wolfie
+
+Now we could try to build the same java app using the official maven image and check the difference in terms of size and vulnerabilities
+
+docker build -f DockerFile-official -t my-java-app01:maven
+
+
+docker run -it --rm -p 8082:8080 myapp01-eclipseofficial:1.0
+
+##USEFUL RESOURCES
+
+apko Overview Chainguard Academy https://edu.chainguard.dev/open-source/build-tools/apko/overview/
+apko github repo:https://github.com/chainguard-dev/apko

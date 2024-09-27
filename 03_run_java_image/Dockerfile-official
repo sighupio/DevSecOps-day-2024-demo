@@ -1,10 +1,9 @@
 # Stage 1: Build the application
-FROM wolfiopenjdk21-base:test-amd64 AS builder
+FROM maven AS builder
 
 # Set environment variables (if needed)
 ENV MAVEN_OPTS="-Xmx512m"
-ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk
-ENV PATH=$PATH:/usr/lib/jvm/java-21-openjdk/bin
+
 # Set the working directory
 WORKDIR /app
 
@@ -21,11 +20,11 @@ COPY src /app/src
 RUN mvn package
 
 # Stage 2: Create the final image
-FROM wolfiopenjdk21-base:test-amd64
+FROM maven
 
 # Create a non-root user and group with specific UID/GID
-RUN addgroup -g 9000 appgroup && \
-    adduser -u 9000 -G appgroup -h /app -s /sbin/nologin -D mavenappuser
+RUN groupadd -g 9000 appgroup && \
+    useradd -u 9000 -G appgroup -d /app -m -s /sbin/nologin mavenappuser
 
 # Adjust permissions for the application directory
 RUN chown -R mavenappuser:appgroup /app
@@ -43,4 +42,4 @@ USER mavenappuser
 EXPOSE 8080
 
 # Define the entry point for the container
-ENTRYPOINT ["/usr/lib/jvm/java-21-openjdk/bin/java", "-jar", "hello-world-1.0-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "hello-world-1.0-SNAPSHOT.jar"]
