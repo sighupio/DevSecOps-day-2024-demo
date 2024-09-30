@@ -4,7 +4,7 @@ FROM wolfiopenjdk21-base:test-amd64 AS builder
 # Set environment variables (if needed)
 ENV MAVEN_OPTS="-Xmx512m"
 ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk
-ENV PATH=$PATH:/usr/lib/jvm/java-21-openjdk/bin
+#ENV PATH=$PATH:/usr/lib/jvm/java-21-openjdk/bin
 # Set the working directory
 WORKDIR /app
 

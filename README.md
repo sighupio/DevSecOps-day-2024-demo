@@ -1,82 +1,103 @@
 # Demo DevSecOps 2024 - Bologna
 
-This repository has been built to provide some practical hints in support of the presentation 'A Journey to Distroless,' 
-delivered by Michele Buccarello and Matteo Bisi during DevSecOps Day 2024 in Bologna. 
+This repository has been created to provide practical support for the presentation "A Journey to Distroless,"  
+delivered by Michele Buccarello and Matteo Bisi during DevSecOps Day 2024 in Bologna.  
+The purpose of this repository is to provide an educational foundation to start creating and working with distroless container technology.  
+The content of this repository is not intended to be production-ready.  
 
 ## How build a base distroless image
 
 There are many different ways to create a distroless base image. 
 In the following examples, we will explain some use cases using the tools apko and melange. 
 
+There are several ways to create a distroless base image.  
+In the following examples, we will demonstrate use cases with the tool `apko`.  
+
+
 ### APKO
 
-apko is the tool that we will use into this poc
+`apko` is the build tool that we will use in this PoC.
 
-There are several ways to install and use apko, 
-in this poc we will use it from the offial container image
+There are several ways to install and use `apko` (e.g., `brew install apko`).  
+In this PoC, to ensure reproducibility across platforms, we will use the official container image:  
 
-```
+```bash
 docker pull cgr.dev/chainguard/apko
 ```
 
-to verify the apko version
-```
+To verify the `apko` version:
+
+```bash
 docker run --rm cgr.dev/chainguard/apko version
 ```
 
-now move into the first folder 
-```
+Now, move into the first folder:
+```bash
 mv 01_build_base_image
 ```
+We are now ready to check the YAML file to understand how `apko` works, and then let's build our first base image:
 
-Let's build our first base image
-```
+```bash
 docker run --rm -v ${PWD}:/work -w /work cgr.dev/chainguard/apko build wolfibase.yaml wolfi-base:test wolfibase.tar
 ```
-check the result !!
 
-Now go ahed with the second baseimage
-```
+Check the result!  
+
+Now, we can repeat the process for the second YAML file: 
+```bash
 docker run --rm -v ${PWD}:/work -w /work cgr.dev/chainguard/apko build alpinebase.yaml alpine-base:test alpinebase.tar
 ```
 
-We can now load both images into docker 
+We can now load the result directly into our local Docker registry: 
+```bash
+docker load < wolfibase.tar
+docker load < alpinebase.tar
 ```
-docker load <  wolfibase.tar
-docker load <  alpinebase.tar
-```
+Have you noticed that JSON files have appeared in the folder? What are they?
 
+## Build&Run a new image for a java application
 
+Move to `02_build_java_image` and review `wolfieopenjdk21.yaml`.
 
-docker pull redhat/ubi8
+Build the new image:  
 
-###Let's see how this could work to build&run an application
-
-Now move to 02_build_java_image and read wolfieopenjdk21.yaml
-
-Build the new image
-
-```
+```bash
 docker run --rm -v ${PWD}:/work -w /work cgr.dev/chainguard/apko build wolfieopenjdk21.yaml wolfiopenjdk21-base:test wolfieopenjdk21.tar
 ```
-and import it into the local docker registry
 
-docker load <  wolfieopenjdk21.tar
+Import it into the local Docker registry:
 
-##BUILD&RUN the image
+```bash
+docker load < wolfieopenjdk21.tar
+```
 
+## Build & Run the Image
 
+Now, let's move inside the folder `03_run_java_image`:
+```bash
 docker build -t my-java-app01:wolfie .
 docker run -it --rm -p 8080:8080 my-java-app01:wolfie
+```
 
-Now we could try to build the same java app using the official maven image and check the difference in terms of size and vulnerabilities
+Now we can try to build the same Java app using the official Maven image and compare the differences  
+in terms of size and vulnerabilities:
 
-docker build -f DockerFile-official -t my-java-app01:maven
+```bash
+docker build -f Dockerfile-MavenOfficial -t my-java-app01:maven
+docker run -it --rm -p 8082:8080 my-java-app01:maven
+```
 
+Using trivy (eg `brew install trivy`)
+```bash
+trivy image my-java-app01:maven
+trivy image my-java-app01:wolfie
+```
 
-docker run -it --rm -p 8082:8080 myapp01-eclipseofficial:1.0
+## USEFUL RESOURCES
 
-##USEFUL RESOURCES
-
-apko Overview Chainguard Academy https://edu.chainguard.dev/open-source/build-tools/apko/overview/ 
-apko github repo:https://github.com/chainguard-dev/apko  
+| Resource  | Link |
+|----------|----------|
+| apko Overview, Chainguard Academy | https://edu.chainguard.dev/open-source/build-tools/apko/overview/ |
+| apko github repo  | https://github.com/chainguard-dev/apko |
+| #apko channel on Kubernetes Slack | https://slack.kubernetes.io/ | 
+| melange Overview, Chainguard Academy | https://edu.chainguard.dev/open-source/build-tools/melange/overview/ |
