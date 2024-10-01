@@ -33,7 +33,7 @@ docker run --rm cgr.dev/chainguard/apko version
 
 Now, move into the first folder:
 ```bash
-mv 01_build_base_image
+cd 01_build_base_image
 ```
 We are now ready to check the YAML file to understand how `apko` works, and then let's build our first base image:
 
@@ -41,7 +41,7 @@ We are now ready to check the YAML file to understand how `apko` works, and then
 docker run --rm -v ${PWD}:/work -w /work cgr.dev/chainguard/apko build wolfibase.yaml wolfi-base:test wolfibase.tar
 ```
 
-Check the result!  
+Check the result!  (`ls -lhs`)
 
 Now, we can repeat the process for the second YAML file: 
 ```bash
@@ -53,8 +53,22 @@ We can now load the result directly into our local Docker registry:
 docker load < wolfibase.tar
 docker load < alpinebase.tar
 ```
-Have you noticed that JSON files have appeared in the folder? What are they?
+Have you noticed that JSON files have appeared in the folder? This files contains the SBOM in SPDX format. 
 
+As last step we could make a compare with one of the common base images  
+on the market: 
+```bash
+docker pull redhat/ubi8
+```
+
+compare the image size and the vulnerability detected between the images.
+
+to scan the image locally with trivy 
+```bash
+trivy image alpine-base:test-amd64
+trivy image wolfi-base:test-amd64
+trivy image redhat/ubi8
+```
 ## Build&Run a new image for a java application
 
 Move to `02_build_java_image` and review `wolfieopenjdk21.yaml`.
@@ -83,7 +97,7 @@ Now we can try to build the same Java app using the official Maven image and com
 in terms of size and vulnerabilities:
 
 ```bash
-docker build -f Dockerfile-MavenOfficial -t my-java-app01:maven
+docker build -f Dockerfile-MavenOfficial -t my-java-app01:maven .
 docker run -it --rm -p 8082:8080 my-java-app01:maven
 ```
 
