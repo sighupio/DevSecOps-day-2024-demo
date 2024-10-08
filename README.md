@@ -7,9 +7,6 @@ The content of this repository is not intended to be production-ready.
 
 ## How build a base distroless image
 
-There are many different ways to create a distroless base image. 
-In the following examples, we will explain some use cases using the tools apko and melange. 
-
 There are several ways to create a distroless base image.  
 In the following examples, we will demonstrate use cases with the tool `apko`.  
 
