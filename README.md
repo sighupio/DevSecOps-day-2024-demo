@@ -104,6 +104,22 @@ trivy image my-java-app01:maven
 trivy image my-java-app01:wolfie
 ```
 
+## Manual distroless
+OK, now that we have understood how to build the images with APKO and see that everything is working as expected, let's try a different approach.  
+Move into `04_Manual_distroless`:
+
+```bash
+docker build -t my-manual-distroless:1.0 .
+```
+
+It works!
+But what are the cons?
+
+- No SBOM generated
+- Manual process
+- Limited compatibility with vulnerability scanners
+- Manual process, prone to errors
+
 ## USEFUL RESOURCES
 
 | Resource  | Link |
