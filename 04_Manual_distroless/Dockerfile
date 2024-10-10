@@ -11,7 +11,7 @@ RUN    apk update \
     && apk fetch --output /tmp     apk-tools \
     && mkdir /tmp/copy && mkdir --parents /tmp/copy/bin \
     && find /tmp -mindepth 1  -maxdepth 1  -type f  -name '*.apk' -exec tar --directory=/tmp/copy --exclude='.PKGINFO' --exclude='.SIGN*'  --extract  --file={} \; \
-  #  && find /tmp -mindepth 1  -maxdepth 1  -type f  -name '*.apk' -exec tar --extract --file={} --to-stdout .PKGINFO  echo \; >> /tmp/copy/packages.txt \
+    && find /tmp -mindepth 1  -maxdepth 1  -type f  -name '*.apk' -exec tar --extract --file={} --to-stdout .PKGINFO  echo \; >> /tmp/copy/packages.txt \
     && ln -s /bin/busybox.static /tmp/copy/bin/busybox \
     && bash -c "for busybox_command in \$( /tmp/copy/bin/busybox.static --list | grep -v busybox); do ln -s /bin/busybox  /tmp/copy/bin/\${busybox_command}; done"
 
